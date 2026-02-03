@@ -122,6 +122,32 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     });
   }
 
+  void _onSquarePressed() {
+    setState(() {
+      try {
+        double number = double.parse(_display);
+        double result = number * number;
+
+        // Format the result to remove trailing zeros
+        String resultString;
+        if (result == result.toInt()) {
+          resultString = result.toInt().toString();
+        } else {
+          resultString = result
+              .toStringAsFixed(10)
+              .replaceAll(RegExp(r'0*$'), '')
+              .replaceAll(RegExp(r'\.$'), '');
+        }
+
+        _display = resultString;
+        _shouldResetDisplay = true;
+      } catch (e) {
+        _display = 'Error';
+        _shouldResetDisplay = true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,7 +209,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             Expanded(
               child: Column(
                 children: [
-                  // Row 1: C, Backspace, /
+                  // Row 1: C, Backspace, /, x²
                   _buildButtonRow([
                     _buildButton('C', Colors.red, _onClearPressed),
                     _buildButton('⌫', Colors.orange, _onBackspacePressed),
@@ -191,6 +217,11 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                       '/',
                       Colors.blue,
                       () => _onOperatorPressed('/'),
+                    ),
+                    _buildButton(
+                      'x²',
+                      Colors.purple,
+                      _onSquarePressed,
                     ),
                   ]),
                   const SizedBox(height: 12),
